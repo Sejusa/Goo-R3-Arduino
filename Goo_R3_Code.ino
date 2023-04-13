@@ -1,6 +1,6 @@
 //Proyecto Arduino Goo R3
 // Hecho por Sergi Funes, Marcos Cobos y Cristhian Rodríguez
-
+ 
 int interruptor = 0;
 int ledEncendido = 1;
 int motor = 2;
