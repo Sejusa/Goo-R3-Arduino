@@ -1,15 +1,15 @@
 //Proyecto Arduino Goo R3
 // Hecho por Sergi Funes, Marcos Cobos y Cristhian Rodríguez
 
-//int interruptor = 0;
 int ledEncendido = 2;
-int motorRuedaI = 6;
-int triggerSensor = 7;
 int echoSensor = 4;
-int motor1I = 10;
-int motor1D = 11;
-int motor2I = 12;
-int motor2D = 13;
+int triggerSensor = 7;
+int interruptor = 8;
+int motorD1 = 9;
+int motorD2 = 10;
+int motorI1 = 11;
+int motorI2 = 12;
+int speed = 51;
 
 void setup() 
 {
@@ -17,26 +17,25 @@ void setup()
   pinMode(ledEncendido, OUTPUT);
   pinMode(triggerSensor, OUTPUT);
   pinMode(echoSensor, INPUT);
-  pinMode(motor1I, OUTPUT);
-  pinMode(motor1D, OUTPUT);
-  pinMode(motor2I, OUTPUT);
-  pinMode(motor2D, OUTPUT);
+  pinMode(motorD1, OUTPUT);
+  pinMode(motorD2, OUTPUT);
+  pinMode(motorI1, OUTPUT);
+  pinMode(motorI2, OUTPUT);
   Serial.begin(9600);
 }
 
 void loop() 
 {
-  /*while (digitalRead(interruptor) == HIGH)
+  while (digitalRead(interruptor) == HIGH)
   {
-    digitalWrite(ledEncendido, HIGH);
-    //digitalWrite(motorRuedaI, HIGH);*/
-    medirDistancia(); 
-    /*if (digitalRead(interruptor) == LOW)
+    for (int i=0; i<3; i++) //Parpadeamos un led para anunciar al usuario de que se va a iniciar el dispositivo.
     {
-      digitalWrite(ledEncendido, LOW);
-      digitalWrite(motor, LOW);
+      digitalWrite(ledEncendido, HIGH);
     }
-  }*/
+  }
+  digitalWrite(ledEncendido, HIGH);
+  medirDistancia();
+
 }
    
 
@@ -51,43 +50,49 @@ void medirDistancia()
   float distance = duration * 0.034 / 2; /*Calculamos la distáncia medida por el sensor en cm. Multiplicamos la duración del sonido entre 0,034(velocidad
                                          del sonido en el aire) entre 2(la ida y a vuelta)*/
 
-  if (distance < 100) //Si la distancia con el objeto es menor a 100.
+  if (distance > 100) //Si la distancia con el objeto es menor a 100.
   {
     rotate(1);
     Serial.println(distance);
   }
-  else 
+  else if (distance < 100)
   {
+    rotate(0);
+    delay(2000);
+    rotate(-1);
     Serial.println(distance);
   }
 }
 
 void rotate(int direction) //Parámetro para indicar hacia donde queremos que giren los motores.
 {
-  bool inPin1I = LOW; //Esta variable y las de abajo se utilizan para controlar el motor.
-  bool inPin1D = HIGH;
-  bool inPin2I = LOW;
-  bool inPin2D = HIGH;
+  digitalWrite(motorD1, 0);
+  digitalWrite(motorD2, 0);
+  digitalWrite(motorI1, 0);
+  digitalWrite(motorI2, 0);
   
   if(direction == 1)
-  { //Se cambia la dirección del motor. En este caso para girar hacia la izquierda
-    inPin1I = HIGH;
-    inPin1D = LOW;
-    inPin2I = HIGH;
-    inPin2D = LOW;
-
-    digitalWrite(motor1I, inPin1I);
-    digitalWrite(motor1D, inPin1D);
-    digitalWrite(motor2I, inPin2I);
-    digitalWrite(motor2D, inPin2D);
+  { //Se cambia la dirección del motor. En este caso para girar hacia adelante.
+    digitalWrite(motorD1, 0);
+    digitalWrite(motorD2, speed);
+    digitalWrite(motorI1, 0);
+    digitalWrite(motorI2, speed);
   }
 
-  else
-  { //Se cambia la dirección del motor. En este casa para girar hacia la derecha.
-    digitalWrite(motor1I, inPin1I);
-    digitalWrite(motor1D, inPin1D);
-    digitalWrite(motor2I, inPin2I);
-    digitalWrite(motor2D, inPin2D);
+  else if (direction == 0)
+  { //Se cambia la dirección del motor. En este caso para que este quieta.
+    digitalWrite(motorD1, 0);
+    digitalWrite(motorD2, 0);
+    digitalWrite(motorI1, 0);
+    digitalWrite(motorI2, 0);
+  }
+
+  else if (direction == -1)
+  {
+    digitalWrite(motorD1, speed);
+    digitalWrite(motorD2, 0);
+    digitalWrite(motorI1, speed);
+    digitalWrite(motorI2, 0);
   }
 }
 
