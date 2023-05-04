@@ -9,11 +9,10 @@ int motorD1 = 9;
 int motorD2 = 10;
 int motorI1 = 11;
 int motorI2 = 12;
-int speed = 51;
 
 void setup() 
 {
-  //pinMode(interruptor, INPUT);
+  pinMode(interruptor, INPUT);
   pinMode(ledEncendido, OUTPUT);
   pinMode(triggerSensor, OUTPUT);
   pinMode(echoSensor, INPUT);
@@ -26,13 +25,23 @@ void setup()
 
 void loop() 
 {
-  while (digitalRead(interruptor) == HIGH)
+  digitalWrite(ledEncendido, LOW); //El LED enpieza estando apagado.
+
+  if (digitalRead(interruptor) == HIGH)
   {
     for (int i=0; i<3; i++) //Parpadeamos un led para anunciar al usuario de que se va a iniciar el dispositivo.
     {
       digitalWrite(ledEncendido, HIGH);
+      delay(1000);
+      digitalWrite(ledEncendido, LOW);
     }
   }
+
+  else
+  {
+    //no hacer nada
+  }
+  
   digitalWrite(ledEncendido, HIGH);
   medirDistancia();
 
@@ -50,53 +59,49 @@ void medirDistancia()
   float distance = duration * 0.034 / 2; /*Calculamos la distáncia medida por el sensor en cm. Multiplicamos la duración del sonido entre 0,034(velocidad
                                          del sonido en el aire) entre 2(la ida y a vuelta)*/
 
-  if (distance > 100) //Si la distancia con el objeto es menor a 100.
+  if (distance > 100) //Si la distancia con el objeto es mayor a 100.
   {
     rotate(1);
+    delay(2000);
     Serial.println(distance);
   }
-  else if (distance < 100)
+  else if (distance < 100) // Si la distancia con el objeto es menor a 100.
   {
     rotate(0);
     delay(2000);
-    rotate(-1);
+    rotate(3);
     Serial.println(distance);
   }
 }
 
 void rotate(int direction) //Parámetro para indicar hacia donde queremos que giren los motores.
 {
-  digitalWrite(motorD1, 0);
-  digitalWrite(motorD2, 0);
-  digitalWrite(motorI1, 0);
-  digitalWrite(motorI2, 0);
+  digitalWrite(motorD1, LOW);
+  digitalWrite(motorD2, LOW);
+  digitalWrite(motorI1, LOW);
+  digitalWrite(motorI2, LOW);
   
   if(direction == 1)
   { //Se cambia la dirección del motor. En este caso para girar hacia adelante.
-    digitalWrite(motorD1, 0);
-    digitalWrite(motorD2, speed);
-    digitalWrite(motorI1, 0);
-    digitalWrite(motorI2, speed);
+    digitalWrite(motorD1, LOW);
+    digitalWrite(motorD2, HIGH);
+    digitalWrite(motorI1, LOW);
+    digitalWrite(motorI2, HIGH);
   }
 
   else if (direction == 0)
   { //Se cambia la dirección del motor. En este caso para que este quieta.
-    digitalWrite(motorD1, 0);
-    digitalWrite(motorD2, 0);
-    digitalWrite(motorI1, 0);
-    digitalWrite(motorI2, 0);
+    digitalWrite(motorD1, LOW);
+    digitalWrite(motorD2, LOW);
+    digitalWrite(motorI1, LOW);
+    digitalWrite(motorI2, LOW);
   }
 
-  else if (direction == -1)
+  else if (direction == 3)
   {
-    digitalWrite(motorD1, speed);
-    digitalWrite(motorD2, 0);
-    digitalWrite(motorI1, speed);
-    digitalWrite(motorI2, 0);
+    digitalWrite(motorD1, HIGH);
+    digitalWrite(motorD2, LOW);
+    digitalWrite(motorI1, HIGH);
+    digitalWrite(motorI2, LOW);
   }
-}
-
-void move(int speed)
-{
-  
 }
