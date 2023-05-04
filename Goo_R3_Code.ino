@@ -59,23 +59,31 @@ void medirDistancia()
   float distance = duration * 0.034 / 2; /*Calculamos la distáncia medida por el sensor en cm. Multiplicamos la duración del sonido entre 0,034(velocidad
                                          del sonido en el aire) entre 2(la ida y a vuelta)*/
 
-  if (distance > 100) //Si la distancia con el objeto es mayor a 100.
+  while (distance > 100) //Si la distancia con el objeto es mayor a 100.
   {
     rotate(1);
-    delay(2000);
     Serial.println(distance);
   }
-  else if (distance < 100) // Si la distancia con el objeto es menor a 100.
+
+  if (distance < 100) // Si la distancia con el objeto es menor a 100.
   {
     rotate(0);
     delay(2000);
     rotate(3);
     Serial.println(distance);
   }
+
+  else if (distance < 50)
+  {
+    rotate(2);
+    delay(2000);
+    rotate(3);
+  }
+
 }
 
 void rotate(int direction) //Parámetro para indicar hacia donde queremos que giren los motores.
-{
+{ //Empezamos con los motores quietos.
   digitalWrite(motorD1, LOW);
   digitalWrite(motorD2, LOW);
   digitalWrite(motorI1, LOW);
@@ -89,19 +97,35 @@ void rotate(int direction) //Parámetro para indicar hacia donde queremos que gi
     digitalWrite(motorI2, HIGH);
   }
 
-  else if (direction == 0)
-  { //Se cambia la dirección del motor. En este caso para que este quieta.
-    digitalWrite(motorD1, LOW);
+  else if (direction == 2)
+  { //Se cambia la dirección del motor. En este caso para que gire marcha atrás.
+    digitalWrite(motorD1, HIGH);
     digitalWrite(motorD2, LOW);
-    digitalWrite(motorI1, LOW);
+    digitalWrite(motorI1, HIGH);
     digitalWrite(motorI2, LOW);
   }
 
   else if (direction == 3)
-  {
+  { //Se cambia la dirección del motor. En este caso para que gire a la izquierda.
     digitalWrite(motorD1, HIGH);
     digitalWrite(motorD2, LOW);
+    digitalWrite(motorI1, LOW);
+    digitalWrite(motorI2, HIGH);
+  }
+
+  else if (direction == 4)
+  { //Se cambia la dirección del motor. En este caso para que gire a la derecha.
+    digitalWrite(motorD1, LOW);
+    digitalWrite(motorD2, HIGH);
     digitalWrite(motorI1, HIGH);
+    digitalWrite(motorI2, LOW);
+  }
+
+  else if (direction == 0)
+  { //Se cambia la dirección del motor. En este caso para que este parado.
+    digitalWrite(motorD1, LOW);
+    digitalWrite(motorD2, LOW);
+    digitalWrite(motorI1, LOW);
     digitalWrite(motorI2, LOW);
   }
 }
