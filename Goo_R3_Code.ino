@@ -5,10 +5,10 @@ int ledEncendido = 2;
 int echoSensor = 4;
 int triggerSensor = 7;
 int interruptor = 8;
-int motorD1 = 9;
-int motorD2 = 10;
-int motorI1 = 11;
-int motorI2 = 12;
+int motorI1 = 9;
+int motorI2 = 10;
+int motorD1 = 11;
+int motorD2 = 12;
 
 void setup() 
 {
@@ -32,19 +32,20 @@ void loop()
     for (int i=0; i<3; i++) //Parpadeamos un led para anunciar al usuario de que se va a iniciar el dispositivo.
     {
       digitalWrite(ledEncendido, HIGH);
-      delay(1000);
+      delay(500);
       digitalWrite(ledEncendido, LOW);
+      delay(500);
+    }
+    digitalWrite(ledEncendido, HIGH);
+    while (digitalRead(interruptor) == LOW) //Ejecutamos hasta volver a pulsar el botón
+    {
+      medirDistancia();
+      if (digitalRead(interruptor) == HIGH)
+      {
+        break; //Paramos el programa.
+      }
     }
   }
-
-  else
-  {
-    //no hacer nada
-  }
-  
-  digitalWrite(ledEncendido, HIGH);
-  medirDistancia();
-
 }
    
 
