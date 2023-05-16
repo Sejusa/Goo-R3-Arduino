@@ -5,10 +5,11 @@ int ledEncendido = 2;
 int echoSensor = 4;
 int triggerSensor = 7;
 int interruptor = 8;
-int motorD1 = 9;
-int motorD2 = 10;
-int motorI1 = 11;
-int motorI2 = 12;
+int motorI1 = 9;
+int motorI2 = 10;
+int motorD1 = 11;
+int motorD2 = 12;
+bool interruptorPulsado = false;
 
 void setup() 
 {
@@ -21,30 +22,36 @@ void setup()
   pinMode(motorI1, OUTPUT);
   pinMode(motorI2, OUTPUT);
   Serial.begin(9600);
+  digitalWrite(ledEncendido, LOW); //El LED enpieza estando apagado.
 }
 
 void loop() 
 {
-  digitalWrite(ledEncendido, LOW); //El LED enpieza estando apagado.
-
-  if (digitalRead(interruptor) == HIGH)
+  if (digitalRead(interruptor) == HIGH && interruptorPulsado == false) //Solo lo ejecutamos si el LED se pulsa y si la variable bool "interruptorPuslado" es false.
   {
+    interruptorPulsado = true;
     for (int i=0; i<3; i++) //Parpadeamos un led para anunciar al usuario de que se va a iniciar el dispositivo.
     {
       digitalWrite(ledEncendido, HIGH);
-      delay(1000);
+      delay(500);
       digitalWrite(ledEncendido, LOW);
+      delay(500);
     }
   }
-
-  else
-  {
-    //no hacer nada
-  }
-  
   digitalWrite(ledEncendido, HIGH);
   medirDistancia();
-
+  
+  if (digitalRead(interruptor) == HIGH)
+  {
+    while(1)
+    {
+      //Se para el programa.
+      if (digitalRead(interruptor) == HIGH)
+      {
+        break;
+      }
+    }
+  }
 }
    
 
@@ -58,19 +65,19 @@ void medirDistancia()
   long duration = pulseIn(echoSensor, HIGH); //Con "pulseIn" esperamos hasta que el pin "echo" sea "HIGH" y medimos cuanto tarda en volver a ser "LOW".
   float distance = duration * 0.034 / 2; /*Calculamos la distáncia medida por el sensor en cm. Multiplicamos la duración del sonido entre 0,034(velocidad
                                          del sonido en el aire) entre 2(la ida y a vuelta)*/
+  Serial.println(distance);
 
   while (distance > 100) //Si la distancia con el objeto es mayor a 100.
   {
     rotate(1);
-    Serial.println(distance);
   }
 
-  if (distance < 100) // Si la distancia con el objeto es menor a 100.
+  if (distance < 100 && distance > 50) // Si la distancia con el objeto es menor a 100 pero mayor que 50.
   {
     rotate(0);
     delay(2000);
     rotate(3);
-    Serial.println(distance);
+    
   }
 
   else if (distance < 50)
@@ -79,7 +86,6 @@ void medirDistancia()
     delay(2000);
     rotate(3);
   }
-
 }
 
 void rotate(int direction) //Parámetro para indicar hacia donde queremos que giren los motores.
