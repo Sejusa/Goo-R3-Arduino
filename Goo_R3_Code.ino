@@ -11,6 +11,7 @@ int motorD1 = 11;
 int motorD2 = 12;
 bool interruptorPulsado = false;
 
+
 void setup() 
 {
   pinMode(interruptor, INPUT);
@@ -27,9 +28,12 @@ void setup()
 
 void loop() 
 {
-  if (digitalRead(interruptor) == HIGH && interruptorPulsado == false) //Solo lo ejecutamos si el LED se pulsa y si la variable bool "interruptorPuslado" es false.
+  if (interruptorPulsado == false) //Si la variable no es false esto se omite.
   {
-    interruptorPulsado = true;
+    while (digitalRead(interruptor) == HIGH && interruptorPulsado == false)
+    {
+        //No se ejecuta nada en bucle hasta que pulsamos el interruptor.
+    }
     for (int i=0; i<3; i++) //Parpadeamos un led para anunciar al usuario de que se va a iniciar el dispositivo.
     {
       digitalWrite(ledEncendido, HIGH);
@@ -37,11 +41,14 @@ void loop()
       digitalWrite(ledEncendido, LOW);
       delay(500);
     }
+    interruptorPulsado = true; //Cambiamos el estado de la variable para que al volver a empezar el loop no se ejecute.
   }
+
+
   digitalWrite(ledEncendido, HIGH);
   medirDistancia();
   
-  if (digitalRead(interruptor) == HIGH)
+  /*if (digitalRead(interruptor) == HIGH)
   {
     while(1)
     {
@@ -51,7 +58,7 @@ void loop()
         break;
       }
     }
-  }
+  }*/
 }
    
 
