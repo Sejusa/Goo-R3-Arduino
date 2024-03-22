@@ -64,17 +64,7 @@ void loop()
     digitalWrite(motorI2, LOW);
   }
   
-  /*if (digitalRead(interruptor) == HIGH)
-  {
-    while(1)
-    {
-      //Se para el programa.
-      if (digitalRead(interruptor) == HIGH)
-      {
-        break;
-      }
-    }
-  }*/
+  interruptorActivado();
 }
    
 
@@ -90,4 +80,28 @@ int medirDistancia()
                                          del sonido en el aire) entre 2(la ida y a vuelta)*/
   Serial.println(distance);
   return distance;
+}
+
+void interruptorActivado() //Función para parar el programa.
+{
+  if (digitalRead(interruptor) == LOW) //Si activamos el interruptor.
+  {
+    // Apagar los motores
+    digitalWrite(motorD1, LOW);
+    digitalWrite(motorD2, LOW);
+    digitalWrite(motorI1, LOW);
+    digitalWrite(motorI2, LOW);
+    digitalWrite(ledEncendido, LOW);
+
+    // Establecemos esto como false para reiniciar el programa posteriormente.
+    interruptorPulsado = false;
+
+    while(true) //Nos mantendremos en este bucle hasta que pulsemos el interruptor.
+    {
+      if(digitalRead(interruptor) == HIGH)
+      {
+        break; //Salimos del bucle.
+      }
+    }
+  }
 }
